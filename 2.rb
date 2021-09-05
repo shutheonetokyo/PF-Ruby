@@ -1,7 +1,7 @@
 class Sneaker
   attr_reader :id, :name, :price
 
-  @@count = 30
+  @@count = 0
 
   def initialize(sneaker_params)
     @id = @@count += 1
@@ -22,12 +22,14 @@ class Shop
     register_sneaker(sneaker_params)
   end
 
+  # 商品を登録
   def register_sneaker(sneaker_params)
     sneaker_params.each do |param|
       @sneakers <<Sneaker.new(param)
     end
   end
 
+  # 商品の表示
   def disp_sneakers
     puts "ナイキショップへようこそ！どのスニーカーを購入しますか？"
     @sneakers.each do |sneaker|
@@ -35,10 +37,20 @@ class Shop
     end
   end
 
+  # 色の表示
+  def ask_color(chosen_sneaker)
+    puts "#{chosen_sneaker.name}ですね！色は何にしますか？"
+    colors.each.with_index(1) do |color,i|
+      puts "#{i}.#{color[:name]}"
+    end
+  end
+
+  # 個数を質問
   def ask_quantity(chosen_sneaker)
     puts "#{chosen_sneaker.name}ですね。何個買いますか？"
   end
 
+  # 合計金額を計算
   def calculate_charges(user)
     total_price = user.chosen_sneaker.price * user.quantity_of_sneaker
     if user.quantity_of_sneaker >= DISCOUNT_STANDARD_VALUE
@@ -53,6 +65,7 @@ end
 class User
   attr_reader :chosen_sneaker, :quantity_of_sneaker
 
+  # 商品を選択
   def choose_sneaker(sneakers)
     while true
       print "商品の番号を選択 > "
@@ -63,6 +76,7 @@ class User
     end
   end
 
+  # 個数を決定
   def decide_quantity
     while true
       print "個数を入力 >"
@@ -73,7 +87,7 @@ class User
   end
 end
 
-
+# 商品データ
 sneaker_params1 = [
   { name: "Dunk" , price: 15000 },
   { name: "Air Max1" , price: 15000 },
@@ -82,19 +96,40 @@ sneaker_params1 = [
   { name: "Air Blazer" , price: 15000 }
 ]
 
+colors = [
+  { name: "black" },
+  { name: "white" },
+  { name: "green" },
+  { name: "red" },
+  { name: "blue" }
+]
+
+# product_params1 の商品を持つお店の開店
 shop1 = Shop.new(sneaker_params1)
 
+# 追加商品データ
 adding_sneaker_params1 = [
   { name: "Air Max95" , price: 15000 },
   { name: "Air Max98 " , price: 15000 }
 ]
 
+# 商品を登録(adding_sneaker_params1 の商品の追加)
 shop1.register_sneaker(adding_sneaker_params1)
 
+# お客さんの来店
 user = User.new
 
+# 商品の表示
 shop1.disp_sneakers
+
+# 商品の選択
 user.choose_sneaker(shop1.sneakers)
+
+# 個数を選択
 shop1.ask_quantity(user.chosen_sneaker)
+
+# 個数を決定
 user.decide_quantity
+
+# 合計金額を計算(実印数をuserというインスタンスに設定)
 shop1.calculate_charges(user)
