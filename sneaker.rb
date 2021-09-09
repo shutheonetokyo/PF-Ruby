@@ -1,7 +1,7 @@
 class Sneaker
   attr_reader :id, :name, :price
 
-  @@count = 30
+  @@count = 0
 
   def initialize(sneaker_params)
     @id = @@count += 1

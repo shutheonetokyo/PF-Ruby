@@ -10,22 +10,42 @@ class Sneaker
   end
 end
 
+class SneakerColor
+  attr_reader :id, :name
+
+  @@count = 0
+
+  def initialize(sneaker_colors)
+    @id = @@count += 1
+    @name = sneaker_colors[:name]
+  end
+end
+
 class Shop
-  attr_reader :sneakers
+  attr_reader :sneakers, :colors
 
   DISCOUNT_STANDARD_VALUE = 5
   DISCOUNT_RATE = 0.1
   AFTER_DISCOUNT_RATE = 1 - DISCOUNT_RATE
 
-  def initialize(sneaker_params)
+  def initialize(sneaker_params, sneaker_colors)
     @sneakers = []
     register_sneaker(sneaker_params)
+    @colors = []
+    register_color(sneaker_colors)
   end
 
   # 商品を登録
   def register_sneaker(sneaker_params)
     sneaker_params.each do |param|
-      @sneakers <<Sneaker.new(param)
+      @sneakers << Sneaker.new(param)
+    end
+  end
+
+  # 商品の色を選択
+  def register_color(sneaker_colors)
+    sneaker_colors.each do |color|
+      @colors << SneakerColor.new(color)
     end
   end
 
@@ -40,8 +60,8 @@ class Shop
   # 色の表示
   def ask_color(chosen_sneaker)
     puts "#{chosen_sneaker.name}ですね！色は何にしますか？"
-    colors.each.with_index(1) do |color,i|
-      puts "#{i}.#{color[:name]}"
+    @colors.each do |color|
+      puts "#{color.id}.#{color.name}"
     end
   end
 
@@ -76,6 +96,13 @@ class User
     end
   end
 
+
+  # 色を選択
+  def choose_color(snaker_colors)
+    
+  end
+
+
   # 個数を決定
   def decide_quantity
     while true
@@ -96,7 +123,7 @@ sneaker_params1 = [
   { name: "Air Blazer" , price: 15000 }
 ]
 
-colors = [
+sneaker_colors = [
   { name: "black" },
   { name: "white" },
   { name: "green" },
@@ -105,7 +132,8 @@ colors = [
 ]
 
 # product_params1 の商品を持つお店の開店
-shop1 = Shop.new(sneaker_params1)
+shop1 = Shop.new(sneaker_params1, sneaker_colors)
+
 
 # 追加商品データ
 adding_sneaker_params1 = [
@@ -113,8 +141,11 @@ adding_sneaker_params1 = [
   { name: "Air Max98 " , price: 15000 }
 ]
 
-# 商品を登録(adding_sneaker_params1 の商品の追加)
+# 商品を登録(adding_sneaker_params1の追加)
 shop1.register_sneaker(adding_sneaker_params1)
+
+# 商品の色を登録(sneaker_colorsの追加)
+shop1.register_color(sneaker_colors)
 
 # お客さんの来店
 user = User.new
@@ -124,6 +155,12 @@ shop1.disp_sneakers
 
 # 商品の選択
 user.choose_sneaker(shop1.sneakers)
+
+# 色の表示
+shop1.ask_color(user.chosen_sneaker)
+
+# 色の選択
+user.choose_color
 
 # 個数を選択
 shop1.ask_quantity(user.chosen_sneaker)
