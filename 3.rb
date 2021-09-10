@@ -10,6 +10,17 @@ class Sneaker
   end
 end
 
+class SneakerColor
+  attr_reader :id, :name
+
+  @@count = 0
+
+  def initialize(sneaker_colors)
+    @id = @@count += 1
+    @color = sneaker_colors[:name]
+  end
+end
+
 class Shop
 
   def initialize(sneaker_params, sneaker_colors)
@@ -34,16 +45,7 @@ shop1.register_sneaker(adding_sneaker_params1)
 shop1.register_color(sneaker_colors)
 
 
-class SneakerColor
-  attr_reader :id, :name
 
-  @@count = 0
-
-  def initialize(sneaker_colors)
-    @id = @@count += 1
-    @color = sneaker_colors[:name]
-  end
-end
 
 
 

@@ -83,7 +83,7 @@ class Shop
 end
 
 class User
-  attr_reader :chosen_sneaker, :quantity_of_sneaker
+  attr_reader :chosen_sneaker, :chosen_sneaker_color, :quantity_of_sneaker
 
   # 商品を選択
   def choose_sneaker(sneakers)
@@ -96,12 +96,16 @@ class User
     end
   end
 
-
   # 色を選択
-  def choose_color(snaker_colors)
-    
+  def choose_color(colors)
+    while true
+      print "商品の番号を選択 > "
+      select_color_id = gets.to_i
+      @chosen_sneaker_color = colors.find{|color| color.id == select_color_id}
+      break if !@chosen_sneaker_color.nil?
+      puts "#{colors.first.id}から#{colors.last.id}の番号から選んでください。"
+    end
   end
-
 
   # 個数を決定
   def decide_quantity
@@ -160,7 +164,7 @@ user.choose_sneaker(shop1.sneakers)
 shop1.ask_color(user.chosen_sneaker)
 
 # 色の選択
-user.choose_color
+user.choose_color(shop1.colors)
 
 # 個数を選択
 shop1.ask_quantity(user.chosen_sneaker)
