@@ -21,15 +21,28 @@ class SneakerColor
   end
 end
 
+class SneakerSize
+  attr_reader :id, :name
+
+  @@count = 0
+
+  def initialize(sneaker_sizes)
+    @id = @@count += 1
+    @name = sneaker_sizes[:name]
+  end
+end
+
 class Shop
-  attr_reader :sneakers, :colors
+  attr_reader :sneakers, :colors, :sizes
 
 
-  def initialize(sneaker_params, sneaker_colors)
+  def initialize(sneaker_params, sneaker_colors, sneaker_sizes)
     @sneakers = []
     register_sneaker(sneaker_params)
     @colors = []
     register_color(sneaker_colors)
+    @sizes = []
+    register_size(sneaker_sizes)
   end
 
   # 商品を登録
@@ -46,6 +59,13 @@ class Shop
     end
   end
 
+  # 商品のサイズを選択
+  def register_size(sneaker_sizes)
+    sneaker_sizes.each do |size|
+      @sizes << SneakerSize.new(size)
+    end
+  end
+
   # 商品の表示
   def disp_sneakers
     puts "ナイキショップへようこそ！どのスニーカーを購入しますか？"
@@ -54,17 +74,25 @@ class Shop
     end
   end
 
-  # 色の表示
+  # 商品の色の表示
   def ask_color(chosen_sneaker)
     puts "#{chosen_sneaker.name}ですね！色は何にしますか？"
     @colors.each do |color|
       puts "#{color.id}.#{color.name}"
     end
   end
+
+  # 商品のサイズの表示
+  def ask_size(chosen_sneaker, chosen_sneaker_color)
+    puts "#{chosen_sneaker.name}で、色は#{chosen_sneaker_color.name}ですね！足のサイズは何にしますか？"
+    @sizes.each do |size|
+      puts "#{size.id}.#{size.name}"
+    end
+  end
 end
 
 class User
-  attr_reader :chosen_sneaker, :chosen_sneaker_color, :quantity_of_sneaker
+  attr_reader :chosen_sneaker, :chosen_sneaker_color, :chosen_sneaker_size
 
   # 商品を選択
   def choose_sneaker(sneakers)
@@ -77,7 +105,7 @@ class User
     end
   end
 
-  # 色を選択
+  # 商品の色を選択
   def choose_color(colors)
     while true
       print "商品の番号を選択 > "
@@ -106,8 +134,21 @@ sneaker_colors = [
   { name: "blue" }
 ]
 
-# product_params1 の商品を持つお店の開店
-shop1 = Shop.new(sneaker_params1, sneaker_colors)
+sneaker_sizes = [
+  { name: "25.0cm" },
+  { name: "25.5cm" },
+  { name: "26.0cm" },
+  { name: "26.5cm" },
+  { name: "27.0cm" },
+  { name: "27.5cm" },
+  { name: "28.0cm" },
+  { name: "28.5cm" },
+  { name: "29.0cm" },
+  { name: "29.5cm" }
+]
+
+# product_params1, sneaker_colors, sneaker_sizesの商品を持つお店の開店
+shop1 = Shop.new(sneaker_params1, sneaker_colors, sneaker_sizes)
 
 
 # 追加商品データ
@@ -122,6 +163,9 @@ shop1.register_sneaker(adding_sneaker_params1)
 # 商品の色を登録(sneaker_colorsの追加)
 shop1.register_color(sneaker_colors)
 
+# 商品のサイズを登録(sneaker_sizesの追加)
+shop1.register_size(sneaker_sizes)
+
 # お客さんの来店
 user = User.new
 
@@ -131,10 +175,12 @@ shop1.disp_sneakers
 # 商品の選択
 user.choose_sneaker(shop1.sneakers)
 
-# 色の表示
+# 商品の色の表示
 shop1.ask_color(user.chosen_sneaker)
 
-# 色の選択
+# 商品の色の選択
 user.choose_color(shop1.colors)
 
+#商品のサイズの表示
+shop1.ask_size(user.choose_sneaker, user.chosen_sneaker_color)
 
