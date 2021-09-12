@@ -9,7 +9,6 @@ class Sneaker
     @price = sneaker_params[:price]
   end
 end
-
 class SneakerColor
   attr_reader :id, :name
 
@@ -20,7 +19,6 @@ class SneakerColor
     @name = sneaker_colors[:name]
   end
 end
-
 class SneakerSize
   attr_reader :id, :name
 
@@ -32,17 +30,28 @@ class SneakerSize
   end
 end
 
+class SneakerDecision
+  attr_reader :id, :name
+
+  @@count = 0
+
+  def initialize(sneaker_decisions)
+    @id = @@count += 1
+    @name = sneaker_decisions[:name]
+  end
+end
 class Shop
-  attr_reader :sneakers, :colors, :sizes
+  attr_reader :sneakers, :colors, :sizes, :decisions
 
-
-  def initialize(sneaker_params, sneaker_colors, sneaker_sizes)
+  def initialize(sneaker_params, sneaker_colors, sneaker_sizes, sneaker_decisions)
     @sneakers = []
     register_sneaker(sneaker_params)
     @colors = []
     register_color(sneaker_colors)
     @sizes = []
     register_size(sneaker_sizes)
+    @decisions = []
+    register_decision(sneaker_decisions)
   end
 
   # 商品を登録
@@ -52,19 +61,27 @@ class Shop
     end
   end
 
-  # 商品の色を選択
+  # 商品の色の登録
   def register_color(sneaker_colors)
     sneaker_colors.each do |color|
       @colors << SneakerColor.new(color)
     end
   end
 
-  # 商品のサイズを選択
+  # 商品のサイズの登録
   def register_size(sneaker_sizes)
     sneaker_sizes.each do |size|
       @sizes << SneakerSize.new(size)
     end
   end
+
+  # "はい"か"いいえ"の登録
+  def register_decision(sneaker_decisions)
+    sneaker_decisions.each do |decision|
+      @decisions << SneakerDecision.new(decisions)
+    end
+  end
+
 
   # 商品の表示
   def disp_sneakers
@@ -89,10 +106,18 @@ class Shop
       puts "#{size.id}.#{size.name}"
     end
   end
+
+  # 個数を質問
+  def ask_decision(chosen_sneaker, chosen_sneaker_color, chosen_sneaker_size)
+    puts "#{chosen_sneaker.name}で、色は#{chosen_sneaker_color.name}で、サイズは#{chosen_sneaker_size.name}ですね。もう1足ご購入していただくと、2足目が10%オフになるキャンペーンを実施中です!2足目を購入されますか？"
+    @decisions.each do |decision|
+      puts "#{decision.id}.#{decision.name}"
+    end
+  end
 end
 
 class User
-  attr_reader :chosen_sneaker, :chosen_sneaker_color, :chosen_sneaker_size
+  attr_reader :chosen_sneaker, :chosen_sneaker_color, :chosen_sneaker_size, :chosen_sneaker_decision
 
   # 商品を選択
   def choose_sneaker(sneakers)
@@ -115,15 +140,37 @@ class User
       puts "#{colors.first.id}から#{colors.last.id}の番号から選んでください。"
     end
   end
+
+  # 商品のサイズを選択
+  def choose_size(sizes)
+    while true
+      print "商品の番号を選択 > "
+      select_size_id = gets.to_i
+      @chosen_sneaker_size = sizes.find{|size| size.id == select_size_id}
+      break if !@chosen_sneaker_size.nil?
+      puts "#{sizes.first.id}から#{sizes.last.id}の番号から選んでください。"
+    end
+  end
+
+  # 商品のサイズを選択
+  def choose_decision(decisions)
+    while true
+      print "商品の番号を選択 > "
+      select_decision_id = gets.to_i
+      @chosen_sneaker_decision = decisios.find{|decision| decision.id == select_decision_id}
+      break if !@chosen_sneaker_decision.nil?
+      puts "#{decisions.first.id}から#{decisions.last.id}の番号から選んでください。"
+    end
+  end
 end
 
 # 商品データ
-sneaker_params1 = [
+sneaker_params = [
   { name: "Dunk" , price: 15000 },
   { name: "Air Max1" , price: 15000 },
   { name: "Air Jordan1" , price: 150000 },
   { name: "Air Force1" , price: 15000 },
-  { name: "Air Blazer" , price: 15000 }
+  { name: "Air Blazer" , price: 15000 },
 ]
 
 sneaker_colors = [
@@ -147,24 +194,15 @@ sneaker_sizes = [
   { name: "29.5cm" }
 ]
 
-# product_params1, sneaker_colors, sneaker_sizesの商品を持つお店の開店
-shop1 = Shop.new(sneaker_params1, sneaker_colors, sneaker_sizes)
-
-
-# 追加商品データ
-adding_sneaker_params1 = [
-  { name: "Air Max95" , price: 15000 },
-  { name: "Air Max98 " , price: 15000 }
+sneaker_decisions = [
+  { name: "はい" },
+  { name: "いいえ" },
+  { name: "はい" },
+  { name: "いいえ" }
 ]
 
-# 商品を登録(adding_sneaker_params1の追加)
-shop1.register_sneaker(adding_sneaker_params1)
-
-# 商品の色を登録(sneaker_colorsの追加)
-shop1.register_color(sneaker_colors)
-
-# 商品のサイズを登録(sneaker_sizesの追加)
-shop1.register_size(sneaker_sizes)
+# product_params1, sneaker_colors, sneaker_sizes, decisions の商品を持つお店の開店
+shop1 = Shop.new(sneaker_params, sneaker_colors, sneaker_sizes, sneaker_decisions)
 
 # お客さんの来店
 user = User.new
@@ -182,5 +220,13 @@ shop1.ask_color(user.chosen_sneaker)
 user.choose_color(shop1.colors)
 
 #商品のサイズの表示
-shop1.ask_size(user.choose_sneaker, user.chosen_sneaker_color)
+shop1.ask_size(user.chosen_sneaker, user.chosen_sneaker_color)
 
+#商品のサイズの選択
+user.choose_size(shop1.sizes)
+
+# "はい"か"いいえ"を表示
+shop1.ask_decision(user.chosen_sneaker, user.chosen_sneaker_color, user.chosen_sneaker_size)
+
+# "はい"か"いいえ"を選択
+user.choose_decision(shop1.decisions)

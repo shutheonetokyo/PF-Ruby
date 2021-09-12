@@ -26,11 +26,15 @@ class SneakerSize
 
   def initialize(sneaker_sizes)
     @id = @@count += 1
-    @size = sneaker_sizes[:name]
+    @name = sneaker_sizes[:name]
   end
 end
 class Shop
   attr_reader :sneakers, :colors, :sizes
+
+  DISCOUNT_STANDARD_VALUE = 5
+  DISCOUNT_RATE = 0.1
+  AFTER_DISCOUNT_RATE = 1 - DISCOUNT_RATE
 
   def initialize(sneaker_params, sneaker_colors, sneaker_sizes)
     @sneakers = []
@@ -86,6 +90,21 @@ class Shop
     end
   end
 
+  # 個数を質問
+  def ask_quantity(chosen_sneaker)
+    puts "#{chosen_sneaker.name}ですね。何個買いますか？"
+  end
+
+  # 合計金額を計算
+  def calculate_charges(user)
+    total_price = user.chosen_sneaker.price * user.quantity_of_sneaker
+    if user.quantity_of_sneaker >= DISCOUNT_STANDARD_VALUE
+      puts "#{DISCOUNT_STANDARD_VALUE}個以上なので#{(DISCOUNT_RATE*100).floor}％割引となります！"
+      total_price *= AFTER_DISCOUNT_RATE
+    end
+    puts "合計金額は#{total_price.floor}円です。"
+    puts "お買い上げありがとうございました！"
+  end
 end
 
 class User
@@ -123,8 +142,18 @@ class User
       puts "#{sizes.first.id}から#{sizes.last.id}の番号から選んでください。"
     end
   end
-end
 
+
+  # 個数を決定
+  def decide_quantity
+    while true
+      print "個数を入力 >"
+      @quantity_of_sneaker = gets.to_i
+      break if @quantity_of_sneaker >= 1
+      puts "一個以上選択してください。"
+    end
+  end
+end
 
 # 商品データ
 sneaker_params1 = [
@@ -156,7 +185,7 @@ sneaker_sizes = [
   { name: "29.5cm" }
 ]
 
-# product_params1 の商品を持つお店の開店
+# product_params1, sneaker_colors, sneaker_sizesの商品を持つお店の開店
 shop1 = Shop.new(sneaker_params1, sneaker_colors, sneaker_sizes)
 
 
@@ -191,8 +220,16 @@ shop1.ask_color(user.chosen_sneaker)
 user.choose_color(shop1.colors)
 
 #商品のサイズの表示
-shop1.ask_size(user.choose_sneaker, user.chosen_sneaker_color)
+shop1.ask_size(user.chosen_sneaker, user.chosen_sneaker_color)
 
 #商品のサイズの選択
 user.choose_size(shop1.sizes)
 
+# 個数を選択
+shop1.ask_quantity(user.chosen_sneaker)
+
+# 個数を決定
+user.decide_quantity
+
+# 合計金額を計算(実印数をuserというインスタンスに設定)
+shop1.calculate_charges(user)
