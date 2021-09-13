@@ -157,9 +157,14 @@ class User
     while true
       print "商品の番号を選択 > "
       select_decision_id = gets.to_i
-      @chosen_sneaker_decision = decisios.find{|decision| decision.id == select_decision_id}
+      @chosen_sneaker_decision = decisions.find{|decision| decision.id == select_decision_id}
       break if !@chosen_sneaker_decision.nil?
-      puts "#{decisions.first.id}から#{decisions.last.id}の番号から選んでください。"
+      puts "#{decisions.first.id}または#{decisions.last.id}の番号から選んでください。"
+    end
+    if select_decision_id == 1
+      puts "２足目をお選びください。"
+    elsif select_decision_id == 2
+      puts "お会計は〇〇円です。"
     end
   end
 end
