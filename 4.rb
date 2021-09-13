@@ -78,7 +78,7 @@ class Shop
   # "はい"か"いいえ"の登録
   def register_decision(sneaker_decisions)
     sneaker_decisions.each do |decision|
-      @decisions << SneakerDecision.new(decisions)
+      @decisions << SneakerDecision.new(decision)
     end
   end
 
@@ -197,8 +197,6 @@ sneaker_sizes = [
 sneaker_decisions = [
   { name: "はい" },
   { name: "いいえ" },
-  { name: "はい" },
-  { name: "いいえ" }
 ]
 
 # product_params1, sneaker_colors, sneaker_sizes, decisions の商品を持つお店の開店
