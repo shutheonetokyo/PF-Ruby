@@ -163,6 +163,7 @@ class User
     end
     if select_decision_id == 1
       puts "２足目をお選びください。"
+      
     elsif select_decision_id == 2
       puts "お会計は〇〇円です。"
     end
@@ -175,7 +176,7 @@ sneaker_params = [
   { name: "Air Max1" , price: 15000 },
   { name: "Air Jordan1" , price: 150000 },
   { name: "Air Force1" , price: 15000 },
-  { name: "Air Blazer" , price: 15000 },
+  { name: "Air Blazer" , price: 15000 }
 ]
 
 sneaker_colors = [
@@ -201,8 +202,9 @@ sneaker_sizes = [
 
 sneaker_decisions = [
   { name: "はい" },
-  { name: "いいえ" },
+  { name: "いいえ" }
 ]
+
 
 # product_params1, sneaker_colors, sneaker_sizes, decisions の商品を持つお店の開店
 shop1 = Shop.new(sneaker_params, sneaker_colors, sneaker_sizes, sneaker_decisions)
