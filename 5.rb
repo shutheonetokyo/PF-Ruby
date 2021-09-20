@@ -87,7 +87,7 @@ class Shop
   def disp_sneakers
     puts "ナイキショップへようこそ！どのスニーカーを購入しますか？"
     @sneakers.each do |sneaker|
-    puts "#{sneaker.id}.#{sneaker.name} (#{sneaker.price}円)"
+     puts "#{sneaker.id}.#{sneaker.name} (#{sneaker.price}円)"
     end
   end
 
@@ -115,8 +115,17 @@ class Shop
     end
   end
 
-  # "はい"と"いいえ"の時のそれぞれの表示
-
+  # "2足目のスニーカーの選択 or お会計"の表示
+  def disp_adding_sneaker(chosen_sneaker_decision, chosen_sneaker)
+    if chosen_sneaker_decision.id == 1
+      puts "２足目をお選びください。"
+      @sneakers.each do |sneaker|
+        puts "#{sneaker.id}.#{sneaker.name} (#{sneaker.price}円)"
+      end
+    elsif chosen_sneaker_decision.id == 2
+      puts "お会計は#{chosen_sneaker.price}円です。"
+    end
+  end
 
 end
 
@@ -165,14 +174,9 @@ class User
       break if !@chosen_sneaker_decision.nil?
       puts "#{decisions.first.id}または#{decisions.last.id}の番号から選んでください。"
     end
-    if select_decision_id == 1
-        puts "２足目をお選びください。"
-    elsif select_decision_id == 2
-        puts "お会計は〇〇円です。"
-    end
   end
-end
 
+end
 
 # 商品データ
 sneaker_params = [
@@ -239,3 +243,6 @@ shop1.ask_decision(user.chosen_sneaker, user.chosen_sneaker_color, user.chosen_s
 
 # "はい"か"いいえ"を選択
 user.choose_decision(shop1.decisions)
+
+# "2足目のスニーカーの選択 or お会計"の表示
+shop1.disp_adding_sneaker(user.chosen_sneaker_decision, user.chosen_sneaker)
