@@ -201,7 +201,6 @@ class Shop
     end
   end
 
-
   # 追加商品の色の表示
   def ask_adding_color(chosen_adding_sneaker)
     puts "#{chosen_adding_sneaker.name}ですね！色は何にしますか？"
@@ -212,18 +211,17 @@ class Shop
 
   # 追加商品のサイズの表示
   def ask_adding_size(chosen_adding_sneaker, chosen_adding_sneaker_color)
-    puts "#{chosen_sneaker.name}で、色は#{chosen_sneaker_color.name}ですね！足のサイズは何にしますか？"
-    @sizes.each do |size|
-      puts "#{size.id}.#{size.name}"
+    puts "#{chosen_adding_sneaker.name}で、色は#{chosen_adding_sneaker_color.name}ですね！足のサイズは何にしますか？"
+    @adding_sizes.each do |adding_size|
+      puts "#{adding_size.id}.#{adding_size.name}"
     end
   end
-
 
 end
 
 
 class User
-  attr_reader :chosen_sneaker, :chosen_sneaker_color, :chosen_sneaker_size, :chosen_sneaker_decision, :chosen_adding_sneaker
+  attr_reader :chosen_sneaker, :chosen_sneaker_color, :chosen_sneaker_size, :chosen_sneaker_decision, :chosen_adding_sneaker, :chosen_adding_sneaker_color, :chosen_adding_sneaker_size
 
   # 商品を選択
   def choose_sneaker(sneakers)
@@ -289,6 +287,17 @@ class User
       @chosen_adding_sneaker_color = adding_colors.find{|adding_color| adding_color.id == select_adding_color_id}
       break if !@chosen_adding_sneaker_color.nil?
       puts "#{adding_colors.first.id}から#{adding_colors.last.id}の番号から選んでください。"
+    end
+  end
+
+  # 追加商品のサイズを選択
+  def choose_adding_size(adding_sizes)
+    while true
+      print "商品の番号を選択 > "
+      select_adding_size_id = gets.to_i
+      @chosen_adding_sneaker_size = adding_sizes.find{|adding_size| adding_size.id == select_adding_size_id}
+      break if !@chosen_adding_sneaker_size.nil?
+      puts "#{adding_sizes.first.id}から#{adding_sizes.last.id}の番号から選んでください。"
     end
   end
 
@@ -410,3 +419,9 @@ shop1.ask_adding_color(user.chosen_adding_sneaker)
 
 # 追加商品の色を選択
 user.choose_adding_color(shop1.adding_colors)
+
+# 追加商品のサイズの表示
+shop1.ask_adding_size(user.chosen_adding_sneaker, user.chosen_adding_sneaker_color)
+
+# 追加商品のサイズを選択
+user.choose_adding_size(shop1.adding_sizes)
