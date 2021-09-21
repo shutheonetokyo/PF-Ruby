@@ -56,8 +56,8 @@ class Shop
 
   # 商品を登録
   def register_sneaker(sneaker_params)
-    sneaker_params.each do |param|
-      @sneakers << Sneaker.new(param)
+    sneaker_params.each do |sneaker_param|
+      @sneakers << Sneaker.new(sneaker_param)
     end
   end
 
@@ -87,7 +87,7 @@ class Shop
   def disp_sneakers
     puts "ナイキショップへようこそ！どのスニーカーを購入しますか？"
     @sneakers.each do |sneaker|
-    puts "#{sneaker.id}.#{sneaker.name} (#{sneaker.price}円)"
+     puts "#{sneaker.id}.#{sneaker.name} (#{sneaker.price}円)"
     end
   end
 
@@ -107,13 +107,26 @@ class Shop
     end
   end
 
-  # 個数を質問
+  # "はい"か"いいえ"の表示
   def ask_decision(chosen_sneaker, chosen_sneaker_color, chosen_sneaker_size)
     puts "#{chosen_sneaker.name}で、色は#{chosen_sneaker_color.name}で、サイズは#{chosen_sneaker_size.name}ですね。もう1足ご購入していただくと、2足目が10%オフになるキャンペーンを実施中です!2足目を購入されますか？"
     @decisions.each do |decision|
       puts "#{decision.id}.#{decision.name}"
     end
   end
+
+  # "2足目のスニーカーの選択 or お会計"の表示
+  def disp_adding_sneaker(chosen_sneaker_decision, chosen_sneaker)
+    if chosen_sneaker_decision.id == 1
+      puts "２足目をお選びください。"
+      @sneakers.each do |sneaker|
+        puts "#{sneaker.id}.#{sneaker.name} (#{sneaker.price}円)"
+      end
+    elsif chosen_sneaker_decision.id == 2
+      puts "お会計は#{chosen_sneaker.price}円です。"
+    end
+  end
+
 end
 
 class User
@@ -161,13 +174,8 @@ class User
       break if !@chosen_sneaker_decision.nil?
       puts "#{decisions.first.id}または#{decisions.last.id}の番号から選んでください。"
     end
-    if select_decision_id == 1
-      puts "２足目をお選びください。"
-      
-    elsif select_decision_id == 2
-      puts "お会計は〇〇円です。"
-    end
   end
+
 end
 
 # 商品データ
@@ -205,7 +213,6 @@ sneaker_decisions = [
   { name: "いいえ" }
 ]
 
-
 # product_params1, sneaker_colors, sneaker_sizes, decisions の商品を持つお店の開店
 shop1 = Shop.new(sneaker_params, sneaker_colors, sneaker_sizes, sneaker_decisions)
 
@@ -235,3 +242,13 @@ shop1.ask_decision(user.chosen_sneaker, user.chosen_sneaker_color, user.chosen_s
 
 # "はい"か"いいえ"を選択
 user.choose_decision(shop1.decisions)
+
+# "2足目のスニーカーの選択 or お会計"の表示
+shop1.disp_adding_sneaker(user.chosen_sneaker_decision, user.chosen_sneaker)
+
+
+user.choose_sneaker(shop1.sneakers)
+
+
+
+shop1.ask_color(user.chosen_sneaker)

@@ -40,10 +40,55 @@ class SneakerDecision
     @name = sneaker_decisions[:name]
   end
 end
-class Shop
-  attr_reader :sneakers, :colors, :sizes, :decisions
 
-  def initialize(sneaker_params, sneaker_colors, sneaker_sizes, sneaker_decisions)
+
+
+class AddingSneaker
+  attr_reader :id, :name, :price
+
+  @@count = 0
+
+  def initialize(adding_sneaker_params)
+    @id = @@count += 1
+    @name = adding_sneaker_params[:name]
+    @price = adding_sneaker_params[:price]
+  end
+end
+class AddingSneakerColor
+  attr_reader :id, :name
+
+  @@count = 0
+
+  def initialize(adding_sneaker_colors)
+    @id = @@count += 1
+    @name = adding_sneaker_colors[:name]
+  end
+end
+class AddingSneakerSize
+  attr_reader :id, :name
+
+  @@count = 0
+
+  def initialize(adding_sneaker_sizes)
+    @id = @@count += 1
+    @name = adding_sneaker_sizes[:name]
+  end
+end
+
+class AddingSneakerDecision
+  attr_reader :id, :name
+
+  @@count = 0
+
+  def initialize(adding_sneaker_decisions)
+    @id = @@count += 1
+    @name = adding_sneaker_decisions[:name]
+  end
+end
+class Shop
+  attr_reader :sneakers, :colors, :sizes, :decisions, :adding_sneakers, :adding_colors, :adding_sizes
+
+  def initialize(sneaker_params, sneaker_colors, sneaker_sizes, sneaker_decisions, adding_sneaker_params, adding_sneaker_colors, adding_sneaker_sizes)
     @sneakers = []
     register_sneaker(sneaker_params)
     @colors = []
@@ -52,6 +97,12 @@ class Shop
     register_size(sneaker_sizes)
     @decisions = []
     register_decision(sneaker_decisions)
+    @adding_sneakers = []
+    register_adding_sneaker(adding_sneaker_params)
+    @adding_colors = []
+    register_adding_color(adding_sneaker_colors)
+    @adding_sizes = []
+    register_adding_size(adding_sneaker_sizes)
   end
 
   # 商品を登録
@@ -79,6 +130,29 @@ class Shop
   def register_decision(sneaker_decisions)
     sneaker_decisions.each do |decision|
       @decisions << SneakerDecision.new(decision)
+    end
+  end
+
+
+
+  # ２つ目の商品を登録
+  def register_adding_sneaker(adding_sneaker_params)
+    adding_sneaker_params.each do |adding_sneaker_param|
+      @adding_sneakers << AddingSneaker.new(adding_sneaker_param)
+    end
+  end
+
+  # ２つ目の商品の色の登録
+  def register_adding_color(adding_sneaker_colors)
+    adding_sneaker_colors.each do |adding_sneaker_color|
+      @adding_colors << AddingSneakerColor.new(adding_sneaker_color)
+    end
+  end
+
+  # ２つ目の商品のサイズの登録
+  def register_adding_size(adding_sneaker_sizes)
+    adding_sneaker_sizes.each do |adding_sneaker_size|
+      @adding_sizes << AddingSneakerSize.new(adding_sneaker_size)
     end
   end
 
@@ -119,14 +193,18 @@ class Shop
   def disp_adding_sneaker(chosen_sneaker_decision, chosen_sneaker)
     if chosen_sneaker_decision.id == 1
       puts "２足目をお選びください。"
-      @sneakers.each do |sneaker|
-        puts "#{sneaker.id}.#{sneaker.name} (#{sneaker.price}円)"
+      @adding_sneakers.each do |adding_sneaker|
+        puts "#{adding_sneaker.id}.#{adding_sneaker.name} (#{adding_sneaker.price}円)"
       end
     elsif chosen_sneaker_decision.id == 2
       puts "お会計は#{chosen_sneaker.price}円です。"
     end
   end
 
+
+  #def calculate
+    #total_price = user.chosen_sneaker.price * user.quantity_of_sneaker
+  #end
 end
 
 class User
@@ -176,6 +254,18 @@ class User
     end
   end
 
+
+  # 追加商品を選択
+  def choose_adding_sneaker(adding_sneakers)
+    while true
+      print "商品の番号を選択 > "
+      select_adding_sneaker_id = gets.to_i
+      @chosen_adding_sneaker = adding_sneakers.find{|adding_sneaker| adding_sneaker.id == select_adding_sneaker_id}
+      break if !@chosen_adding_sneaker.nil?
+      puts "#{adding_sneakers.first.id}から#{adding_sneakers.last.id}の番号から選んでください。"
+    end
+  end
+
 end
 
 # 商品データ
@@ -214,8 +304,42 @@ sneaker_decisions = [
 ]
 
 
-# product_params1, sneaker_colors, sneaker_sizes, decisions の商品を持つお店の開店
-shop1 = Shop.new(sneaker_params, sneaker_colors, sneaker_sizes, sneaker_decisions)
+adding_sneaker_params = [
+  { name: "Dunk" , price: 15000 },
+  { name: "Air Max1" , price: 15000 },
+  { name: "Air Jordan1" , price: 150000 },
+  { name: "Air Force1" , price: 15000 },
+  { name: "Air Blazer" , price: 15000 }
+]
+
+adding_sneaker_colors = [
+  { name: "black" },
+  { name: "white" },
+  { name: "green" },
+  { name: "red" },
+  { name: "blue" }
+]
+
+adding_sneaker_sizes = [
+  { name: "25.0cm" },
+  { name: "25.5cm" },
+  { name: "26.0cm" },
+  { name: "26.5cm" },
+  { name: "27.0cm" },
+  { name: "27.5cm" },
+  { name: "28.0cm" },
+  { name: "28.5cm" },
+  { name: "29.0cm" },
+  { name: "29.5cm" }
+]
+
+adding_sneaker_decisions = [
+  { name: "はい" },
+  { name: "いいえ" }
+]
+
+# sneaker_params, sneaker_colors, sneaker_sizes, decisions の商品を持つお店の開店
+shop1 = Shop.new(sneaker_params, sneaker_colors, sneaker_sizes, sneaker_decisions, adding_sneaker_params, adding_sneaker_colors, adding_sneaker_sizes)
 
 # お客さんの来店
 user = User.new
@@ -244,5 +368,14 @@ shop1.ask_decision(user.chosen_sneaker, user.chosen_sneaker_color, user.chosen_s
 # "はい"か"いいえ"を選択
 user.choose_decision(shop1.decisions)
 
-# "2足目のスニーカーの選択 or お会計"の表示
+
+#shop1.register_adding_sneaker(adding_sneaker_params)
+
+
+# "2足目のスニーカーの購入 or お会計"の表示
 shop1.disp_adding_sneaker(user.chosen_sneaker_decision, user.chosen_sneaker)
+
+# 追加商品の選択
+user.choose_adding_sneaker(shop1.adding_sneakers)
+
+
