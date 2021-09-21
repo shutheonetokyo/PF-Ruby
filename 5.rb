@@ -189,7 +189,7 @@ class Shop
     end
   end
 
-  # "2足目のスニーカーの選択 or お会計"の表示
+  # "2足目の商品の選択 or お会計"の表示
   def disp_adding_sneaker(chosen_sneaker_decision, chosen_sneaker)
     if chosen_sneaker_decision.id == 1
       puts "２足目をお選びください。"
@@ -202,13 +202,28 @@ class Shop
   end
 
 
-  #def calculate
-    #total_price = user.chosen_sneaker.price * user.quantity_of_sneaker
-  #end
+  # 追加商品の色の表示
+  def ask_adding_color(chosen_adding_sneaker)
+    puts "#{chosen_adding_sneaker.name}ですね！色は何にしますか？"
+    @adding_colors.each do |adding_color|
+      puts "#{adding_color.id}.#{adding_color.name}"
+    end
+  end
+
+  # 追加商品のサイズの表示
+  def ask_adding_size(chosen_adding_sneaker, chosen_adding_sneaker_color)
+    puts "#{chosen_sneaker.name}で、色は#{chosen_sneaker_color.name}ですね！足のサイズは何にしますか？"
+    @sizes.each do |size|
+      puts "#{size.id}.#{size.name}"
+    end
+  end
+
+
 end
 
+
 class User
-  attr_reader :chosen_sneaker, :chosen_sneaker_color, :chosen_sneaker_size, :chosen_sneaker_decision
+  attr_reader :chosen_sneaker, :chosen_sneaker_color, :chosen_sneaker_size, :chosen_sneaker_decision, :chosen_adding_sneaker
 
   # 商品を選択
   def choose_sneaker(sneakers)
@@ -265,6 +280,18 @@ class User
       puts "#{adding_sneakers.first.id}から#{adding_sneakers.last.id}の番号から選んでください。"
     end
   end
+
+  # 追加商品の色を選択
+  def choose_adding_color(adding_colors)
+    while true
+      print "商品の番号を選択 > "
+      select_adding_color_id = gets.to_i
+      @chosen_adding_sneaker_color = adding_colors.find{|adding_color| adding_color.id == select_adding_color_id}
+      break if !@chosen_adding_sneaker_color.nil?
+      puts "#{adding_colors.first.id}から#{adding_colors.last.id}の番号から選んでください。"
+    end
+  end
+
 
 end
 
@@ -378,4 +405,8 @@ shop1.disp_adding_sneaker(user.chosen_sneaker_decision, user.chosen_sneaker)
 # 追加商品の選択
 user.choose_adding_sneaker(shop1.adding_sneakers)
 
+# 追加商品の色の表示
+shop1.ask_adding_color(user.chosen_adding_sneaker)
 
+# 追加商品の色を選択
+user.choose_adding_color(shop1.adding_colors)
