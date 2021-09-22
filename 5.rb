@@ -158,7 +158,7 @@ class Shop
 
 
   # 商品の表示
-  def disp_sneakers
+  def ask_sneakers
     puts "ナイキショップへようこそ！どのスニーカーを購入しますか？"
     @sneakers.each do |sneaker|
      puts "#{sneaker.id}.#{sneaker.name} (#{sneaker.price}円)"
@@ -174,30 +174,30 @@ class Shop
   end
 
   # 商品のサイズの表示
-  def ask_size(chosen_sneaker, chosen_sneaker_color)
-    puts "#{chosen_sneaker.name}で、色は#{chosen_sneaker_color.name}ですね！足のサイズは何にしますか？"
+  def ask_size(chosen_sneaker_color)
+    puts "#{chosen_sneaker_color.name}ですね！足のサイズは何にしますか？"
     @sizes.each do |size|
       puts "#{size.id}.#{size.name}"
     end
   end
 
   # "はい"か"いいえ"の表示
-  def ask_decision(chosen_sneaker, chosen_sneaker_color, chosen_sneaker_size)
-    puts "#{chosen_sneaker.name}で、色は#{chosen_sneaker_color.name}で、サイズは#{chosen_sneaker_size.name}ですね。もう1足ご購入していただくと、2足目が10%オフになるキャンペーンを実施中です!2足目を購入されますか？"
+  def ask_decision(chosen_sneaker_size)
+    puts "#{chosen_sneaker_size.name}ですね。もう1足ご購入していただくと、2足目が10%オフになるキャンペーンを実施中です!2足目を購入されますか？"
     @decisions.each do |decision|
       puts "#{decision.id}.#{decision.name}"
     end
   end
 
   # "2足目の商品の選択 or お会計"の表示
-  def disp_adding_sneaker(chosen_sneaker_decision, chosen_sneaker)
+  def ask_adding_sneaker(chosen_sneaker_decision)
     if chosen_sneaker_decision.id == 1
       puts "２足目をお選びください。"
       @adding_sneakers.each do |adding_sneaker|
         puts "#{adding_sneaker.id}.#{adding_sneaker.name} (#{adding_sneaker.price}円)"
       end
     elsif chosen_sneaker_decision.id == 2
-      puts "お会計は#{chosen_sneaker.price}円です。"
+      puts "ご購入ありがとうございました。"
     end
   end
 
@@ -210,12 +210,19 @@ class Shop
   end
 
   # 追加商品のサイズの表示
-  def ask_adding_size(chosen_adding_sneaker, chosen_adding_sneaker_color)
-    puts "#{chosen_adding_sneaker.name}で、色は#{chosen_adding_sneaker_color.name}ですね！足のサイズは何にしますか？"
+  def ask_adding_size(chosen_adding_sneaker_color)
+    puts "#{chosen_adding_sneaker_color.name}ですね！足のサイズは何にしますか？"
     @adding_sizes.each do |adding_size|
       puts "#{adding_size.id}.#{adding_size.name}"
     end
   end
+
+  def calculate_charges
+    total_price = 
+    puts "#{chosen_sneaker}と#{choose_adding_sneaker}の２足"
+
+  end
+
 
 end
 
@@ -256,17 +263,16 @@ class User
     end
   end
 
-  # 商品のサイズを選択
+  # "はい"、"いいえ"を選択
   def choose_decision(decisions)
     while true
-      print "商品の番号を選択 > "
+      print "番号を選択 > "
       select_decision_id = gets.to_i
       @chosen_sneaker_decision = decisions.find{|decision| decision.id == select_decision_id}
       break if !@chosen_sneaker_decision.nil?
       puts "#{decisions.first.id}または#{decisions.last.id}の番号から選んでください。"
     end
   end
-
 
   # 追加商品を選択
   def choose_adding_sneaker(adding_sneakers)
@@ -300,11 +306,10 @@ class User
       puts "#{adding_sizes.first.id}から#{adding_sizes.last.id}の番号から選んでください。"
     end
   end
-
-
+  
 end
 
-# 商品データ
+# 商品一覧
 sneaker_params = [
   { name: "Dunk" , price: 15000 },
   { name: "Air Max1" , price: 15000 },
@@ -313,6 +318,7 @@ sneaker_params = [
   { name: "Air Blazer" , price: 15000 }
 ]
 
+# 商品の色一覧
 sneaker_colors = [
   { name: "black" },
   { name: "white" },
@@ -321,6 +327,7 @@ sneaker_colors = [
   { name: "blue" }
 ]
 
+# 商品のサイズ一覧
 sneaker_sizes = [
   { name: "25.0cm" },
   { name: "25.5cm" },
@@ -334,12 +341,13 @@ sneaker_sizes = [
   { name: "29.5cm" }
 ]
 
+# "はい"、"いいえ"一覧
 sneaker_decisions = [
   { name: "はい" },
   { name: "いいえ" }
 ]
 
-
+# 追加商品一覧
 adding_sneaker_params = [
   { name: "Dunk" , price: 15000 },
   { name: "Air Max1" , price: 15000 },
@@ -348,6 +356,7 @@ adding_sneaker_params = [
   { name: "Air Blazer" , price: 15000 }
 ]
 
+# 追加商品の色一覧
 adding_sneaker_colors = [
   { name: "black" },
   { name: "white" },
@@ -356,6 +365,7 @@ adding_sneaker_colors = [
   { name: "blue" }
 ]
 
+# 追加商品のサイズ一覧
 adding_sneaker_sizes = [
   { name: "25.0cm" },
   { name: "25.5cm" },
@@ -381,7 +391,7 @@ shop1 = Shop.new(sneaker_params, sneaker_colors, sneaker_sizes, sneaker_decision
 user = User.new
 
 # 商品の表示
-shop1.disp_sneakers
+shop1.ask_sneakers
 
 # 商品の選択
 user.choose_sneaker(shop1.sneakers)
@@ -393,23 +403,21 @@ shop1.ask_color(user.chosen_sneaker)
 user.choose_color(shop1.colors)
 
 #商品のサイズの表示
-shop1.ask_size(user.chosen_sneaker, user.chosen_sneaker_color)
+shop1.ask_size(user.chosen_sneaker_color)
 
 #商品のサイズの選択
 user.choose_size(shop1.sizes)
 
 # "はい"か"いいえ"を表示
-shop1.ask_decision(user.chosen_sneaker, user.chosen_sneaker_color, user.chosen_sneaker_size)
+shop1.ask_decision(user.chosen_sneaker_size)
 
 # "はい"か"いいえ"を選択
 user.choose_decision(shop1.decisions)
 
 
-#shop1.register_adding_sneaker(adding_sneaker_params)
 
-
-# "2足目のスニーカーの購入 or お会計"の表示
-shop1.disp_adding_sneaker(user.chosen_sneaker_decision, user.chosen_sneaker)
+# "2足目のスニーカーの購入"の表示
+shop1.ask_adding_sneaker(user.chosen_sneaker_decision)
 
 # 追加商品の選択
 user.choose_adding_sneaker(shop1.adding_sneakers)
@@ -421,7 +429,10 @@ shop1.ask_adding_color(user.chosen_adding_sneaker)
 user.choose_adding_color(shop1.adding_colors)
 
 # 追加商品のサイズの表示
-shop1.ask_adding_size(user.chosen_adding_sneaker, user.chosen_adding_sneaker_color)
+shop1.ask_adding_size(user.chosen_adding_sneaker_color)
 
 # 追加商品のサイズを選択
 user.choose_adding_size(shop1.adding_sizes)
+
+
+5.rbにて、"はい"、"いいえ"の処理の実装（エラー）
